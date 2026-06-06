@@ -1,0 +1,450 @@
+// ============================================================================
+// Prisma Configuration
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Enums
+// ============================================================================
+
+enum QueueStatus {
+  waiting
+  calling
+  examining
+  observation
+  done
+  cancelled
+}
+
+enum QueueAction {
+  CALL
+  RECALL
+  CANCEL_CALL
+  MOVE_TO_EXAM
+  RETURN_TO_WAITING
+  COMPLETE
+}
+
+enum DisplayMode {
+  YOUTUBE
+  CAROUSEL
+  CPR
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  NURSE
+  DOCTOR
+}
+
+enum SystemSettingDataType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+  ARRAY
+}
+
+// ============================================================================
+// HOSxP Sync
+// ตารางพักข้อมูลผู้ป่วยที่ Sync มาจาก HOSxP
+// ============================================================================
+
+model HosxpErVisit {
+  vn     String @id @db.VarChar(20)
+  hn     String @db.VarChar(20)
+  oqueue Int
+
+  vstDate DateTime?
+  vstTime String?
+
+  fname String @db.VarChar(100)
+  ageY  Int?
+
+  bps         Float?
+  bpd         Float?
+  pulse       Float?
+  rr          Float?
+  temperature Float?
+  o2sat       Float?
+
+  erEmergencyLevelId Int?
+  ptPriorityId       Int?
+
+  curDep  String?
+  lastDep String?
+
+  ovstost  String?
+  tostName String?
+
+  raw Json?
+
+  createdAt DateTime @default(now())
+  syncedAt  DateTime @updatedAt
+
+  queueState ErQueueState?
+
+  @@index([hn])
+  @@index([oqueue])
+  @@index([vstDate])
+  @@map("hosxp_er_visit")
+}
+
+// ============================================================================
+// Queue Management
+// ระบบจัดการคิว ER
+// ============================================================================
+
+model ErQueueState {
+  vn     String      @id @db.VarChar(20)
+  status QueueStatus @default(waiting)
+
+  currentChannelId String?      @db.VarChar(50)
+  channel          ExamChannel? @relation(fields: [currentChannelId], references: [id])
+
+  calledAt    DateTime?
+  examiningAt DateTime?
+  doneAt      DateTime?
+
+  calledByUserId  String?
+  updatedByUserId String?
+
+  calledBy  User? @relation("QueueCalledBy", fields: [calledByUserId], references: [id])
+  updatedBy User? @relation("QueueUpdatedBy", fields: [updatedByUserId], references: [id])
+
+  note String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  visit  HosxpErVisit @relation(fields: [vn], references: [vn], onDelete: Cascade)
+  events QueueEvent[]
+
+  @@index([status])
+  @@index([calledByUserId])
+  @@index([updatedByUserId])
+  @@map("er_queue_state")
+}
+
+model QueueEvent {
+  id BigInt @id @default(autoincrement())
+
+  vn     String      @db.VarChar(20)
+  action QueueAction
+
+  fromStatus QueueStatus?
+  toStatus   QueueStatus?
+
+  fromChannelId String?
+  toChannelId   String?
+
+  note String? @db.Text
+
+  createdByUserId String?
+
+  createdBy User? @relation("QueueEventCreatedBy", fields: [createdByUserId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  queue ErQueueState @relation(fields: [vn], references: [vn], onDelete: Cascade)
+
+  @@index([vn])
+  @@index([action])
+  @@index([createdAt])
+  @@index([createdByUserId])
+  @@map("queue_event")
+}
+
+model ExamChannel {
+  id String @id @default(cuid())
+
+  code String @unique @db.VarChar(50)
+  name String @db.VarChar(100)
+
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  queues ErQueueState[]
+
+  @@map("exam_channel")
+}
+
+// ============================================================================
+// Youtube Playlist
+// ============================================================================
+
+model YoutubePlaylistItem {
+  id String @id @default(cuid())
+
+  title     String
+  youtubeId String
+
+  durationSec Int?
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("youtube_playlist_item")
+}
+
+model YoutubeSetting {
+  id String @id @default("main")
+
+  muted  Boolean @default(false)
+  volume Float   @default(0.5)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("youtube_setting")
+}
+
+// ============================================================================
+// Carousel Images
+// ============================================================================
+
+model CarouselImage {
+  id String @id @default(cuid())
+
+  title    String?
+  fileName String?
+  imageUrl String
+
+  durationSec Int @default(10)
+  sortOrder   Int @default(0)
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("carousel_image")
+}
+
+
+// ============================================================================
+// Footer Messages
+// ============================================================================
+
+model FooterMessage {
+  id String @id @default(cuid())
+
+  title String?
+
+  message String @db.Text
+
+  isActive Boolean @default(true)
+
+  sortOrder Int @default(0)
+
+  startAt DateTime?
+  endAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("footer_message")
+}
+
+
+// ============================================================================
+// System Settings
+// ตั้งค่าระบบแบบ Dynamic
+// ============================================================================
+
+model MediaSetting {
+  id String @id @default("main")
+
+  mode        DisplayMode @default(YOUTUBE)
+  isCprActive Boolean     @default(false)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("media_setting")
+}
+
+model SystemSetting {
+  id BigInt @id @default(autoincrement())
+
+  category  String @db.VarChar(100)
+  groupName String @map("group_name") @db.VarChar(100)
+
+  key String @db.VarChar(150)
+
+  valueText String? @map("value_text") @db.Text
+  valueJson Json?   @map("value_json")
+
+  dataType SystemSettingDataType @map("data_type")
+
+  label       String? @db.VarChar(255)
+  description String? @db.Text
+  placeholder String? @db.VarChar(255)
+
+  sortOrder Int @default(0) @map("sort_order")
+
+  isPublic Boolean @default(false) @map("is_public")
+  isActive Boolean @default(true) @map("is_active")
+
+  updatedBy String? @map("updated_by") @db.VarChar(100)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([category, key])
+  @@index([category])
+  @@index([groupName])
+  @@index([isActive])
+  @@map("system_setting")
+}
+
+// ============================================================================
+// Authentication & Authorization
+// Better Auth
+// ============================================================================
+
+model User {
+  id String @id @default(cuid())
+
+  username String @unique
+  email    String @unique
+
+  displayUsername String?
+  name        String?
+  firstName   String  @map("first_name")
+  lastName    String  @map("last_name")
+
+  image String?
+
+  role UserRole @default(STAFF)
+
+  banned          Boolean?  @default(false)
+  isActive        Boolean?  @default(true)
+  emailVerified Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  calledQueues  ErQueueState[] @relation("QueueCalledBy")
+  updatedQueues ErQueueState[] @relation("QueueUpdatedBy")
+
+  queueEvents QueueEvent[] @relation("QueueEventCreatedBy")
+
+  sessions  Session[]
+  accounts  Account[]
+  auditLogs AuditLog[]
+
+  @@map("user")
+}
+
+model Session {
+  id String @id
+
+  userId String
+
+  token String
+
+  expiresAt DateTime
+
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([expiresAt])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id String @id
+
+  userId String
+
+  providerId String
+  accountId  String
+
+  password String?
+
+  accessToken  String?
+  refreshToken String?
+
+  idToken String? @db.Text
+  scope   String? @db.Text
+
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("account")
+}
+
+// ============================================================================
+// Audit Trail
+// เก็บประวัติการกระทำในระบบ
+// ============================================================================
+
+model AuditLog {
+  id String @id @default(cuid())
+
+  userId String?
+
+  action String
+
+  entity   String?
+  entityId String?
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([entity, entityId])
+  @@map("audit_log")
+}
+
+// ============================================================================
+// Verification
+// Email Verification / Password Reset / OTP
+// ============================================================================
+
+model Verification {
+  id String @id
+
+  identifier String @db.Text
+  value      String @db.Text
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([identifier(length: 191)])
+  @@map("verification")
+}
