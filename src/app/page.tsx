@@ -8,7 +8,6 @@ export default async function Home() {
   // await new Promise((resolve) => setTimeout(resolve, 500));
   return (
     <div className="min-h-screen bg-slate-900">
-      <p>TEST MEGRE</p>
       <HomeHeader />
       <main>
         <HeroSection />
