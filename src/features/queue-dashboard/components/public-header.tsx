@@ -4,9 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock } from "lucide-react";
 import { thaiDate } from "@/lib/utils";
-import { useClock } from "../hooks/use-clock";
+import { useClock } from "@/hooks/use-clock";
 
-export function DashboardHeader() {
+
+export function PublicHeader() {
   const time = useClock();
   return (
     <header className="h-20 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">

@@ -3,14 +3,20 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
-  
+
   devIndicators: {},
 
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'localhost',
+        protocol: "https",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+        port: "",
+        pathname: "/vi/**",
       },
     ],
   },

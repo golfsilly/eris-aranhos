@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { DashboardHeader } from "@/features/queue-dashboard/components/dashboard-header";
+import { PublicHeader } from "@/features/queue-dashboard/components/public-header";
 import { VideoPanel } from "@/features/queue-dashboard/components/video-panel";
-import { useTvPlaylist } from "@/features/queue-dashboard/hooks/use-tv-playlist";
+
 import { useVideoRotation } from "@/features/queue-dashboard/hooks/use-video-rotation";
-import DashboardFooter from "@/features/queue-dashboard/components/dashboard-footer";
+import DashboardFooter from "@/features/queue-dashboard/components/public-footer";
 import { socket } from "@/lib/socket-client";
+import { useTvPlaylist } from "@/app/(admin)/admin/settings/media-panel/youtube/_components/use-youtube-playlist";
 
 export default function QueueDisplay() {
   const [isCPR, setIsCPR] = useState(false);
@@ -80,7 +81,7 @@ export default function QueueDisplay() {
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-950 text-slate-50">
-      <DashboardHeader />
+      <PublicHeader />
       <main className="flex flex-1 overflow-hidden p-4 gap-4">
         <VideoPanel
           isCPR={isCPR}

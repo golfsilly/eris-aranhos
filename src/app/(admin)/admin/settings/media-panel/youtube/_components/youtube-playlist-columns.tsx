@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -12,15 +13,23 @@ export type PlaylistItem = {
   isActive: boolean;
   sortOrder: number;
 };
+
 type Props = {
   onDelete: (id: string) => void;
-  onToggle: (id: string, value: boolean) => void;
+  onToggle: (id: string, isActive: boolean) => void;
 };
+
 export const getColumns = ({
   onDelete,
   onToggle,
 }: Props): ColumnDef<PlaylistItem>[] => [
-  { accessorKey: "sortOrder", header: "ลำดับ" },
+  {
+    accessorKey: "sortOrder",
+    header: "ลำดับ",
+    cell: ({ row }) => {
+      return <span>{row.index + 1}</span>;
+    },
+  },
   { accessorKey: "title", header: "ชื่อ" },
   { accessorKey: "youtubeId", header: "YouTube ID" },
   {
@@ -29,9 +38,12 @@ export const getColumns = ({
     cell: ({ row }) => {
       const item = row.original;
       return (
-        <img
-          className="w-32 rounded-md"
+        <Image
+          className="w-32 rounded-md object-cover aspect-video border bg-muted"
           src={`https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`}
+          alt={item.title}
+          width={128}
+          height={72}
         />
       );
     },
@@ -44,7 +56,7 @@ export const getColumns = ({
       return (
         <Switch
           checked={item.isActive}
-          onCheckedChange={(value) => onToggle(item.id, value)}
+          onCheckedChange={(checked) => onToggle(item.id, checked)}
         />
       );
     },
@@ -60,8 +72,7 @@ export const getColumns = ({
           size="icon"
           onClick={() => onDelete(item.id)}
         >
-          {" "}
-          <Trash2 className="w-4 h-4" />{" "}
+          <Trash2 className="w-4 h-4" />
         </Button>
       );
     },

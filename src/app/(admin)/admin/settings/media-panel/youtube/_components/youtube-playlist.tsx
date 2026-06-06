@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Plus, Search, Tv, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,25 +14,38 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { TvPlaylistTable } from "@/app/(defaults)/tv/_components/tv-playlist-table";
-import { getColumns } from "@/app/(defaults)/tv/_components/tv-playlist-columns";
-import { useTvPlaylist } from "@/features/queue-dashboard/hooks/use-tv-playlist";
-import { useCreateTvPlaylist } from "@/features/queue-dashboard/hooks/use-create-tv-playlist";
-import { useToggleTvPlaylist } from "@/features/queue-dashboard/hooks/use-toggle-tv-playlist";
-import { useDeleteTvPlaylist } from "@/features/queue-dashboard/hooks/use-delete-tv-playlist";
+
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+
+import {
+  useCreateTvPlaylist,
+  useDeleteTvPlaylist,
+  useToggleTvPlaylist,
+  useTvPlaylist,
+  useUpdateTvPlaylistOrder,
+} from "./use-youtube-playlist";
+
+import { getColumns, type PlaylistItem } from "./youtube-playlist-columns";
+import { YoutubePlaylistTable } from "./youtube-playlist-table";
 
 type FilterType = "all" | "active";
 
-interface PlaylistItem {
-  id: string;
-  title: string;
-  youtubeId: string;
-  isActive: boolean;
-}
-
 // ─── Add Video Dialog ────────────────────────────────────────────────────────
-// ✅ FIX: ใช้ uncontrolled dialog (ไม่รับ open/onOpenChange จาก parent)
-//         แล้วใช้ DialogTrigger asChild ห่อ Button เพื่อหลีกเลี่ยง button-in-button
 function AddVideoDialog() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -48,7 +62,6 @@ function AddVideoDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* ✅ asChild ทำให้ Radix ใช้ <button> ของ Button แทนที่จะสร้างใหม่ครอบ */}
       <DialogTrigger asChild>
         <Button size="lg" className="gap-2">
           <Plus className="w-4 h-4" />
@@ -86,10 +99,12 @@ function AddVideoDialog() {
             />
             {youtubeId && (
               <div className="overflow-hidden rounded-lg border bg-muted">
-                <img
+                <Image
                   src={`https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`}
                   alt="YouTube preview"
                   className="w-full h-36 object-cover"
+                  width={128}
+                  height={72}
                 />
               </div>
             )}
@@ -185,7 +200,7 @@ function EmptyState({ hasSearch }: { hasSearch: boolean }) {
       <p className="text-sm text-muted-foreground mt-1 max-w-xs">
         {hasSearch
           ? "ลองใช้คำค้นหาอื่น หรือล้างตัวกรอง"
-          : "กดปุ่ม \"เพิ่มวิดีโอ\" ด้านบนเพื่อเริ่มต้น"}
+          : 'กดปุ่ม "เพิ่มวิดีโอ" ด้านบนเพื่อเริ่มต้น'}
       </p>
     </div>
   );
@@ -201,11 +216,15 @@ function StatsCards({ total, active }: { total: number; active: number }) {
       </div>
       <div className="rounded-xl border bg-card p-4">
         <p className="text-xs text-muted-foreground mb-1">กำลังแสดง</p>
-        <p className="text-2xl font-bold text-green-600 dark:text-green-400">{active}</p>
+        <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+          {active}
+        </p>
       </div>
       <div className="rounded-xl border bg-card p-4 hidden sm:block">
         <p className="text-xs text-muted-foreground mb-1">ปิดใช้งาน</p>
-        <p className="text-2xl font-bold text-muted-foreground">{total - active}</p>
+        <p className="text-2xl font-bold text-muted-foreground">
+          {total - active}
+        </p>
       </div>
     </div>
   );
@@ -219,9 +238,12 @@ export default function YoutubePlaylist() {
   const { data: items = [], isLoading } = useTvPlaylist();
   const deleteMutation = useDeleteTvPlaylist();
   const toggleMutation = useToggleTvPlaylist();
+  const updateOrderMutation = useUpdateTvPlaylistOrder();
 
   const allItems = items as PlaylistItem[];
   const activeItems = allItems.filter((i) => i.isActive);
+
+  const isFilteringOrSearching = search.length > 0 || filter !== "all";
 
   const filteredItems = allItems
     .filter(
@@ -231,19 +253,40 @@ export default function YoutubePlaylist() {
     )
     .filter((item) => filter === "all" || item.isActive);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = filteredItems.findIndex((item) => item.id === active.id);
+      const newIndex = filteredItems.findIndex((item) => item.id === over.id);
+
+      const newOrder = arrayMove(filteredItems, oldIndex, newIndex);
+      const reorderedIds = newOrder.map((item) => item.id);
+      await updateOrderMutation.mutateAsync(reorderedIds);
+    }
+  }
+
   async function handleDelete(id: string) {
     await deleteMutation.mutateAsync(id);
   }
 
   async function handleToggle(id: string, isActive: boolean) {
-    await toggleMutation.mutateAsync({ id, isActive: !isActive });
+    await toggleMutation.mutateAsync({ id, isActive });
   }
 
-  const columns = getColumns({ onDelete: handleDelete, onToggle: handleToggle });
+  const columns = getColumns({
+    onDelete: handleDelete,
+    onToggle: handleToggle,
+  });
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
@@ -251,19 +294,19 @@ export default function YoutubePlaylist() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30">
               <Tv className="w-4 h-4 text-red-600 dark:text-red-400" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">TV Playlist</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Youtube Playlist</h1>
           </div>
           <p className="text-sm text-muted-foreground pl-10">
             จัดการวิดีโอประชาสัมพันธ์สำหรับ ER TV
           </p>
         </div>
-
-        {/* ✅ ไม่ต้องส่ง open/onOpenChange ลงไปแล้ว — dialog จัดการ state เองใน component */}
         <AddVideoDialog />
       </div>
 
       {/* Stats */}
-      {!isLoading && <StatsCards total={allItems.length} active={activeItems.length} />}
+      {!isLoading && (
+        <StatsCards total={allItems.length} active={activeItems.length} />
+      )}
 
       {/* Search & Filter */}
       <SearchFilterBar
@@ -286,8 +329,30 @@ export default function YoutubePlaylist() {
       ) : filteredItems.length === 0 ? (
         <EmptyState hasSearch={search.length > 0} />
       ) : (
-        <div className="rounded-xl border overflow-hidden">
-          <TvPlaylistTable columns={columns} data={filteredItems} />
+        <div className="rounded-xl border overflow-hidden bg-card">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis]}
+          >
+            <SortableContext
+              items={filteredItems.map((item) => item.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <YoutubePlaylistTable
+                columns={columns}
+                data={filteredItems}
+                isDragDisabled={isFilteringOrSearching}
+              />
+            </SortableContext>
+          </DndContext>
+
+          {isFilteringOrSearching && (
+            <p className="text-xs text-muted-foreground p-3 text-center border-t bg-muted/30">
+              *เคล็ดลับ: ล้างการค้นหาและเลือกตัวกรอง เพื่อเปิดใช้งานการลากจัดลำดับวิดีโอ
+            </p>
+          )}
         </div>
       )}
     </div>

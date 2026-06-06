@@ -6,7 +6,7 @@ type Params = Promise<{ id: string }>;
 export async function PATCH(req: Request, props: { params: Params }) {
   const params = await props.params;
   const body = await req.json();
-  const item = await prisma.tvPlaylistItem.update({
+  const item = await prisma.youtubePlaylistItem.update({
     where: { id: params.id },
     data: {
       title: body.title,
@@ -19,6 +19,6 @@ export async function PATCH(req: Request, props: { params: Params }) {
 }
 export async function DELETE(req: Request, props: { params: Params }) {
   const params = await props.params;
-  await prisma.tvPlaylistItem.delete({ where: { id: params.id } });
+  await prisma.youtubePlaylistItem.delete({ where: { id: params.id } });
   return NextResponse.json({ success: true });
 }
