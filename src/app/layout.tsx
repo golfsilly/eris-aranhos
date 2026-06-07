@@ -46,7 +46,7 @@ export default function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang="th"
       data-theme-mode={theme_mode}
       data-theme-preset={theme_preset}
       data-content-layout={content_layout}
@@ -59,7 +59,7 @@ export default function RootLayout({
       <head>
         <ThemeBootScript />
       </head>
-      <body className={`${fontVars} flex flex-col`}>
+      <body className={`${fontVars} bg-slate-950`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

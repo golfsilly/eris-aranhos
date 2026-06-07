@@ -9,8 +9,6 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { useUpdateYoutubeSetting, useYoutubeSetting } from "../hooks/use-youtube-setting";
 
-
-
 export function YoutubeSettingCard() {
   const { data, isLoading } = useYoutubeSetting();
   const updateMutation = useUpdateYoutubeSetting();

@@ -124,19 +124,6 @@ export function FeaturesSection() {
                 </li>
               ))}
             </ul>
-
-            <div className="flex flex-col sm:flex-row gap-4 pe-4 pt-2">
-              <Button size="lg">
-                <a href="/auth/signin" className="flex items-center">
-                  เข้าสู่ระบบ
-                  <ArrowRight className="ms-2 size-4" />
-                </a>
-              </Button>
-
-              <Button size="lg" variant="outline">
-                <a href="#features">ดูรายละเอียดระบบ</a>
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -177,19 +164,6 @@ export function FeaturesSection() {
                 </li>
               ))}
             </ul>
-
-            <div className="flex flex-col sm:flex-row gap-4 pe-4 pt-2">
-              <Button size="lg">
-                <a href="#" className="flex items-center">
-                  คู่มือการใช้งาน
-                  <ArrowRight className="ms-2 size-4" />
-                </a>
-              </Button>
-
-              <Button size="lg" variant="outline">
-                <a href="#">ติดต่อผู้ดูแลระบบ</a>
-              </Button>
-            </div>
           </div>
 
           {/* Right Image */}

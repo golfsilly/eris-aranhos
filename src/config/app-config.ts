@@ -4,12 +4,18 @@ const currentYear = new Date().getFullYear();
 
 export const APP_CONFIG = {
   app: {
-    name: "Emergency Room Information System",
+    name: {
+      th: "ระบบห้องอุบัติเหตุและฉุกเฉิน",
+      en: "Emergency Room Information System",
+    },
     version: packageJson.version,
   },
   hospital: {
-    name: "โรงพยาบาลอรัญประเทศ",
-    shortName: "Aranyaprathet Hospital",
+    name: {
+      th: "โรงพยาบาลอรัญประเทศ",
+      en: "Aranyaprathet Hospital",
+    },
+    shortName: "ARH",
     website: "https://aranhos.moph.go.th",
     email: "sarabankang.aran@gmail.com",
     facebook: "https://www.facebook.com/aran.hosp",

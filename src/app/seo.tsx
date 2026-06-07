@@ -41,9 +41,9 @@ export function genPageMetadata({
       ...(keywords ?? []),
     ],
 
-    applicationName: APP_CONFIG.app.name,
-    creator: APP_CONFIG.hospital.name,
-    publisher: APP_CONFIG.hospital.name,
+    applicationName: APP_CONFIG.app.name.th,
+    creator: APP_CONFIG.hospital.name.th,
+    publisher: APP_CONFIG.hospital.name.th,
     category: "Healthcare",
 
     alternates: {

@@ -11,14 +11,33 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
+import * as React from "react";
+import { SidebarContext } from "@/contexts/sidebar-context";
 import { MenuAdminList } from "./menu-list";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
 
-
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const ctx = React.useContext(SidebarContext);
+
+  const [variant, setVariant] = React.useState(() => props.variant);
+  const [collapsible, setCollapsible] = React.useState(() => props.collapsible);
+
+  React.useEffect(() => {
+    if (!ctx?.config) return;
+    // Schedule updates asynchronously to avoid synchronous setState inside effect
+    const t = setTimeout(() => {
+      setVariant(ctx.config.variant ?? props.variant);
+      setCollapsible(ctx.config.collapsible ?? props.collapsible);
+    }, 0);
+    return () => clearTimeout(t);
+  }, [ctx?.config, props.variant, props.collapsible]);
+
   return (
-    <Sidebar {...props}>
+    <Sidebar
+      {...(variant ? { variant } : {})}
+      {...(collapsible ? { collapsible } : {})}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

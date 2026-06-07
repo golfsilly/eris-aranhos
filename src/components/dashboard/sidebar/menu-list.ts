@@ -9,6 +9,7 @@ import {
   HeartPlus,
   BriefcaseMedical,
   UserCog2,
+  TvMinimal,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -72,13 +73,18 @@ export const MenuDashboardList: {
       items: [
         {
           title: "Display 1",
-          url: "/tv",
+          url: "/monitor",
           icon: Tv,
         },
         {
           title: "Display 2",
-          url: "/tv2",
+          url: "/monitor2",
           icon: Tv2,
+        },
+        {
+          title: "Display 3",
+          url: "/monitor3",
+          icon: TvMinimal,
           badge: "Coming Soon",
         },
       ],

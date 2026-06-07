@@ -4,8 +4,12 @@ import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
   Settings,
-  HeartPlus,
   UserCog2,
+  TextInitial,
+  HeartPulse,
+  ImagePlay,
+  MonitorPlay,
+  SquarePlay,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -43,22 +47,27 @@ export const MenuAdminList: {
         {
           title: "Media Panel",
           url: "/admin/settings/media-panel",
-          icon: Settings,
+          icon: SquarePlay,
           items: [
             {
-              title: "CPR Settings",
+              title: "Footer",
+              url: "/admin/settings/footer-message",
+              icon: TextInitial,
+            },
+            {
+              title: "CPR",
               url: "/admin/settings/media-panel/cpr",
-              icon: HeartPlus,
+              icon: HeartPulse,
             },
             {
-              title: "Carousel Settings",
+              title: "Carousel",
               url: "/admin/settings/media-panel/carousel",
-              icon: HeartPlus,
+              icon: ImagePlay,
             },
             {
-              title: "Youtube Settings",
+              title: "Youtube",
               url: "/admin/settings/media-panel/youtube",
-              icon: HeartPlus,
+              icon: MonitorPlay,
             },
           ],
         },

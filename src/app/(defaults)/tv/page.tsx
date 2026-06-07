@@ -8,7 +8,7 @@ export const metadata = genPageMetadata({ title: "ระบบคิวห้อ
 export default function page() {
   return (
     // <QueueDashboard />
-    <QueueDashboard2 />
-    // <QueueDashboard3 />
+    // <QueueDashboard2 />
+    <QueueDashboard3 />
   )
 }
