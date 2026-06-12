@@ -6,9 +6,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   compress: true,
   poweredByHeader: false,
-
-  devIndicators: {},
-
+  devIndicators: false,
   images: {
     remotePatterns: [
       {
@@ -16,15 +14,7 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
       },
       {
-        protocol: "https",
-        hostname: "localhost",
-      },
-      {
         protocol: "http",
-        hostname: "192.168.4.30",
-      },
-      {
-        protocol: "https",
         hostname: "192.168.4.30",
       },
       {

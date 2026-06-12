@@ -40,7 +40,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "next.config.ts"
-  ],
+, "ecosystem.config.js"  ],
   "exclude": [
     "node_modules"
   ]
