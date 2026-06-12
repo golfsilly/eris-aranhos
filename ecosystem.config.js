@@ -1,58 +1,40 @@
 module.exports = {
   apps: [
     // =========================
-    // Next.js 16 (Standalone)
+    // NEXT.JS APP (STABLE MODE)
     // =========================
     {
       name: "nextjs-app",
       cwd: "./",
-      script: ".next/standalone/server.js",
+      script: "npm",
+      args: "run start -p 3200",
       exec_mode: "cluster",
-      instances: "max", // ใช้ทุก CPU core
-      watch: false,
+      instances: 2,
 
       env: {
         NODE_ENV: "production",
-        PORT: 3200,
-      },
-
-      env_development: {
-        NODE_ENV: "development",
         PORT: 3200,
       },
 
       max_memory_restart: "1G",
-
-      error_file: "./logs/nextjs-error.log",
-      out_file: "./logs/nextjs-out.log",
-      log_date_format: "YYYY-MM-DD HH:mm:ss",
     },
 
     // =========================
-    // Socket.IO Server
+    // SOCKET.IO SERVER
     // =========================
     {
       name: "socket-server",
-      cwd: "./src/server",
-      script: "socket.ts",
+      cwd: "./src/server/socket",
+      script: "server.js",
       interpreter: "node",
-      watch: false,
+      exec_mode: "fork",
 
       env: {
         NODE_ENV: "production",
         PORT: 3201,
       },
 
-      env_development: {
-        NODE_ENV: "development",
-        PORT: 3201,
-      },
-
       max_memory_restart: "500M",
-
-      error_file: "./logs/socket-error.log",
-      out_file: "./logs/socket-out.log",
-      log_date_format: "YYYY-MM-DD HH:mm:ss",
     },
   ],
 };

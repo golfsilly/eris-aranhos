@@ -5,8 +5,8 @@
   "scripts": {
     "socket": "tsx src/server/socket.ts",
     "dev": "next dev -p 3200",
-    "start": "node .next/standalone/server.ts",
     "build": "next build",
+    "start": "next start -p 3200",
     "lint": "eslint"
   },
   "dependencies": {
