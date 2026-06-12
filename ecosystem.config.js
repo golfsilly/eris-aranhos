@@ -25,7 +25,7 @@ module.exports = {
     {
       name: "socket-server",
       cwd: "./src/server/socket",
-      script: "server.js",
+      script: "socket.ts",
       interpreter: "node",
       exec_mode: "fork",
 

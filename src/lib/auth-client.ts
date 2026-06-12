@@ -8,7 +8,7 @@ import {
 import { auth } from "./auth";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3200",
+  baseURL: process.env.NEXT_PUBLIC_APP_URL,
   plugins: [usernameClient(), inferAdditionalFields<typeof auth>()],
 });
 
