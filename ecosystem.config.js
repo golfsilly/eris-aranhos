@@ -33,7 +33,7 @@ module.exports = {
     // =========================
     {
       name: "socket-server",
-      cwd: "./server",
+      cwd: "./src/server",
       script: "socket.ts",
       interpreter: "node",
       watch: false,
