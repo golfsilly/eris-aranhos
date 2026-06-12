@@ -22,7 +22,6 @@ export default function MonitorHeader() {
                 width={40}
                 height={40}
                 className="object-contain p-0.5"
-                priority
               />
             </div>
           </Link>

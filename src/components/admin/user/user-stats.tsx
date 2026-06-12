@@ -29,7 +29,7 @@ export async function UserStats() {
   const staffUsers = roleCounts[UserRole.STAFF] ?? 0;
 
   return (
-    <div className="grid grid-cols-5 gap-4 p-4 bg-slate-50 rounded-lg border">
+    <div className="grid grid-cols-5 gap-4 p-4 bg-background rounded-lg border">
       <div>Total: <span className="font-bold">{totalUsers}</span></div>
       <div>Admin: <span className="font-bold">{adminUsers}</span></div>
       <div>Doctor: <span className="font-bold">{doctorUsers}</span></div>

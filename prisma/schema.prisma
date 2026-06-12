@@ -218,17 +218,25 @@ model YoutubeSetting {
 model CarouselImage {
   id String @id @default(cuid())
 
-  title    String?
+  title String?
+
   fileName String?
+
   imageUrl String
 
+  cloudinaryId String?
+
   durationSec Int @default(10)
-  sortOrder   Int @default(0)
+
+  sortOrder Int @default(0)
 
   isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@index([isActive])
 
   @@map("carousel_image")
 }
@@ -273,40 +281,6 @@ model MediaSetting {
   updatedAt DateTime @updatedAt
 
   @@map("media_setting")
-}
-
-model SystemSetting {
-  id BigInt @id @default(autoincrement())
-
-  category  String @db.VarChar(100)
-  groupName String @map("group_name") @db.VarChar(100)
-
-  key String @db.VarChar(150)
-
-  valueText String? @map("value_text") @db.Text
-  valueJson Json?   @map("value_json")
-
-  dataType SystemSettingDataType @map("data_type")
-
-  label       String? @db.VarChar(255)
-  description String? @db.Text
-  placeholder String? @db.VarChar(255)
-
-  sortOrder Int @default(0) @map("sort_order")
-
-  isPublic Boolean @default(false) @map("is_public")
-  isActive Boolean @default(true) @map("is_active")
-
-  updatedBy String? @map("updated_by") @db.VarChar(100)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([category, key])
-  @@index([category])
-  @@index([groupName])
-  @@index([isActive])
-  @@map("system_setting")
 }
 
 // ============================================================================

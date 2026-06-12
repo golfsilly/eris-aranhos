@@ -19,7 +19,6 @@ export default function HomeHeader() {
               width={60}
               height={60}
               className="object-contain w-16 h-16"
-              priority
             />
           </div>
 

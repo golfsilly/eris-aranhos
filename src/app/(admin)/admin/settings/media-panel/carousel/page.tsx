@@ -1,59 +1,84 @@
 import { prisma } from "@/lib/prisma";
-import { Database, Zap } from "lucide-react";
+import { Database, Zap, Images as ImageIcon, Settings2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import CarouselSlider from "./_components/carousel-slider";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CarouselSwitchCard } from "./_components/carousel-switch-card";
+import { CarouselTable } from "./_components/carousel-table";
+import { CarouselFormDialog } from "./_components/carousel-form-dialog";
 
 export default async function CarouselSettingPage() {
+  const images = await prisma.carouselImage.findMany({
+    orderBy: { sortOrder: "asc" },
+  });
+
   const setting = await prisma.mediaSetting.findUnique({
     where: { id: "main" },
   });
 
+  const isCarouselActive = setting?.mode === "CAROUSEL";
+
   return (
-    <div className="max-w-2xl space-y-7">
-      {/* Page header */}
-      <div className="space-y-3">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground font-mono">
-          <span>ตั้งค่า</span>
-          <span>/</span>
-          <span>หน้าจอ Carousel</span>
-        </div>
-
-        <div className="space-y-1">
-          <h1 className="text-[22px] font-bold tracking-tight">
-            ตั้งค่าหน้าจอ Carousel
-          </h1>
-          <p className="text-[13px] text-muted-foreground leading-relaxed">
-            เปิดหรือปิดการแสดงหน้าจอ Carousel และบันทึกสถานะลงฐานข้อมูล
-          </p>
-        </div>
-
-        {/* Metadata badges */}
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">
-            <Database className="w-3 h-3" />
-            mediaSetting · main
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            real-time
-          </span>
+    <div className="max-w-7xl space-y-8 p-6">
+      {/* Header Section */}
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold tracking-tight">ตั้งค่าหน้าจอ Carousel</h1>
+        <p className="text-muted-foreground">
+          จัดการการแสดงผล Carousel และบริหารจัดการรูปภาพบนหน้าจอทีวี
+        </p>
+        
+        {/* Status Badges */}
+        <div className="flex items-center gap-3 mt-2">
+          <div className="flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium">
+            <Database className="h-3 w-3" />
+            mediaSetting: <span className="text-primary font-bold">main</span>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-full border bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-600">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+            Real-time Sync
+          </div>
         </div>
       </div>
 
       <Separator />
 
-      {/* Toggle card */}
-      <CarouselSlider
-        initialIsCarouselActive={setting?.mode === "CAROUSEL" ?? false}
-      />
+      {/* Main Settings Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings2 className="h-5 w-5" />
+            การตั้งค่าการแสดงผล
+          </CardTitle>
+          <CardDescription>เปิดหรือปิดการทำงานของ Carousel</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <CarouselSwitchCard key={setting?.mode} initialValue={isCarouselActive} />
+          
+          <div className="flex items-start gap-3 rounded-lg border bg-muted/30 p-4">
+            <Zap className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+            <p className="text-sm text-muted-foreground">
+              หากเปิดใช้งาน ระบบจะแสดงรูปภาพ Carousel บนหน้าจอทีวี หากปิดใช้งาน 
+              ระบบจะสลับไปแสดงผล YouTube แทนโดยอัตโนมัติ
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Info note */}
-      <div className="flex items-start gap-3 rounded-xl bg-muted px-4 py-3.5">
-        <Zap className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-        <p className="text-[13px] text-muted-foreground leading-relaxed">
-          เปิด Carousel เพื่อแสดงรูปภาพสไลด์โชว์บนจอทีวี
-        </p>
+      {/* Images Management Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <ImageIcon className="h-5 w-5 text-primary" />
+              รายการรูปภาพ
+            </h2>
+            <p className="text-sm text-muted-foreground">จัดการลำดับและรายการรูปภาพทั้งหมด</p>
+          </div>
+          <CarouselFormDialog />
+        </div>
+
+        <div className="rounded-lg border bg-card shadow-sm">
+          <CarouselTable data={images} />
+        </div>
       </div>
     </div>
   );

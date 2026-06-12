@@ -1,5 +1,5 @@
 import { DisplayClient } from "./_components/display-client";
 
-export default function Monitor2Page() {
+export default function MonitorPage() {
   return <DisplayClient />;
 }

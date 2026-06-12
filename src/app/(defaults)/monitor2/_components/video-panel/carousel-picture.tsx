@@ -57,21 +57,19 @@ export function CarouselPicture() {
     <Carousel
       plugins={[Autoplay({ delay: 3000, stopOnInteraction: true })]}
       opts={{ loop: true }}
-      className="w-full"
+      className="w-full h-full" // ✅ เพิ่ม h-full
     >
-      <CarouselContent>
+      <CarouselContent className="h-full">
         {validSlides.map((slide) => (
-          <CarouselItem key={slide.image}>
-            <div className="overflow-hidden">
-              <div className="relative w-full aspect-[9/16] md:aspect-[3/4] lg:aspect-[2/3] bg-[#0d1626]">
-                <Image
-                  src={slide.image}
-                  alt={slide.title || "slide"}
-                  fill
-                  className="object-cover" 
-                  priority
-                />
-              </div>
+          <CarouselItem key={slide.image} className="h-full">
+            <div className="relative h-[600px] w-full">
+              <Image
+                src="/images/carousel/picture1.jpg"
+                alt="Picture"
+                fill
+                sizes="100vw"
+                className="object-cover"
+              />
             </div>
           </CarouselItem>
         ))}

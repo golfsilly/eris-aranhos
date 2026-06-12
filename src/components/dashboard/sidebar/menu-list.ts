@@ -10,6 +10,7 @@ import {
   BriefcaseMedical,
   UserCog2,
   TvMinimal,
+  Megaphone,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -51,6 +52,11 @@ export const MenuDashboardList: {
       label: "Application",
       items: [
         {
+          title: "Queue Screen",
+          url: "/queue-screen",
+          icon: Megaphone,
+        },
+        {
           title: "Staff Station",
           url: "/staff",
           icon: UserCog2,
@@ -73,20 +79,19 @@ export const MenuDashboardList: {
       items: [
         {
           title: "Display 1",
-          url: "/monitor",
+          url: "/display1",
           icon: Tv,
         },
-        {
-          title: "Display 2",
-          url: "/monitor2",
-          icon: Tv2,
-        },
-        {
-          title: "Display 3",
-          url: "/monitor3",
-          icon: TvMinimal,
-          badge: "Coming Soon",
-        },
+        // {
+        //   title: "Display 2",
+        //   url: "/display2",
+        //   icon: Tv2,
+        // },
+        // {
+        //   title: "Display 3",
+        //   url: "/display3",
+        //   icon: TvMinimal,
+        // },
       ],
     },
   ],

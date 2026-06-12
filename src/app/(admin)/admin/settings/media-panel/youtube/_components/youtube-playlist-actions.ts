@@ -15,7 +15,7 @@ export async function getPlaylistItems() {
 // ─── ลบวิดีโอ ───────────────────────────────────────────────────
 export async function deletePlaylistItem(id: string) {
   await prisma.youtubePlaylistItem.delete({ where: { id } });
-  revalidatePath("/monitor");
+  revalidatePath("/display1");
 }
 
 // ─── เปิด/ปิด การใช้งานวิดีโอ ────────────────────────────────────────
@@ -24,7 +24,7 @@ export async function togglePlaylistItem(id: string, isActive: boolean) {
     where: { id },
     data: { isActive },
   });
-  revalidatePath("/monitor");
+  revalidatePath("/display1");
   return item;
 }
 
@@ -38,7 +38,7 @@ export async function updatePlaylistOrder(orderedIds: string[]) {
       }),
     ),
   );
-  revalidatePath("/monitor");
+  revalidatePath("/display1");
 }
 
 // ─── สร้างวิดีโอใหม่ ───────────────────────────────
@@ -62,6 +62,6 @@ export async function createPlaylistItem(data: {
     },
   });
 
-  revalidatePath("/monitor");
+  revalidatePath("/display1");
   return item;
 }

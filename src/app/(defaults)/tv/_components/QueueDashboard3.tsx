@@ -146,15 +146,14 @@ export default function QueueDashboard3() {
             </CardHeader>
             <CardContent className="flex-1 p-3 pt-0">
               <div className="w-full h-full bg-black rounded-lg overflow-hidden relative border border-slate-950">
-                {/* แนบลิงก์วิดีโอจาก YouTube (เปลี่ยน VIDEO_ID เป็นของโรงพยาบาล) */}
-                <iframe
+                {/* <iframe
                   className="w-full h-full absolute inset-0"
                   src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ"
                   title="ER Educational Video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                />
+                /> */}
               </div>
             </CardContent>
           </Card>

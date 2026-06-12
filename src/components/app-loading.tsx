@@ -36,7 +36,6 @@ export default function Loading({
             width={60}
             height={60}
             className="object-contain p-1"
-              priority
             />
           </div>
         </div>

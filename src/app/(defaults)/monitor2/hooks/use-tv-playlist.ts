@@ -16,7 +16,7 @@ export function useTvPlaylist() {
     queryKey: ["tv-playlist"],
 
     queryFn: async () => {
-      const response = await fetch("/api/tv-playlist");
+      const response = await fetch("/api/youtube");
 
       if (!response.ok) {
         throw new Error("Failed to fetch playlist");

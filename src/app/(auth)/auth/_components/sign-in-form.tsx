@@ -74,14 +74,14 @@ export function SignInForm({
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-bold text-foreground">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email or username 
+          Enter your email or username
         </p>
       </div>
 
       <div className="grid gap-6">
-        {/* Identifier (Email or Username) */}
+        {/* Identifier */}
         <div className="grid gap-2">
           <Label htmlFor="identifier">Email or Username</Label>
           <Input
@@ -89,9 +89,10 @@ export function SignInForm({
             type="text"
             {...form.register("identifier")}
             disabled={isLoading}
+            className="bg-background"
           />
           {form.formState.errors.identifier && (
-            <p className="text-sm text-red-500">
+            <p className="text-sm text-destructive">
               {form.formState.errors.identifier.message}
             </p>
           )}
@@ -101,28 +102,31 @@ export function SignInForm({
         <div className="grid gap-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <a
+            <Link
               href="/auth/forgot-password"
               className="text-sm underline-offset-4 hover:underline text-muted-foreground"
             >
               Forgot your password?
-            </a>
+            </Link>
           </div>
           <Input
             id="password"
             type="password"
             {...form.register("password")}
             disabled={isLoading}
+            className="bg-background"
           />
           {form.formState.errors.password && (
-            <p className="text-sm text-red-500">
+            <p className="text-sm text-destructive">
               {form.formState.errors.password.message}
             </p>
           )}
         </div>
 
         {/* Global Error */}
-        {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+        {error && (
+          <p className="text-sm text-destructive text-center">{error}</p>
+        )}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -130,9 +134,9 @@ export function SignInForm({
         </Button>
       </div>
 
-      <div className="text-center text-sm">
+      <div className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href="/auth/signup" className="underline underline-offset-4">
+        <Link href="/auth/signup" className="underline underline-offset-4 hover:text-foreground">
           Sign up
         </Link>
       </div>

@@ -22,7 +22,6 @@ export default function MonitorHeader() {
                 width={40}
                 height={40}
                 className="object-contain p-0.5"
-                priority
               />
             </div>
           </Link>
@@ -31,7 +30,7 @@ export default function MonitorHeader() {
 
           <div>
             <h1 className="text-[15px] font-semibold leading-tight tracking-[0.01em] text-slate-50">
-              ระบบคิวห้องฉุกเฉิน
+              ระบบรายงานสถานะห้องฉุกเฉิน
             </h1>
             <p className="mt-0.5 text-[12px] tracking-[0.02em] text-slate-500">
               {APP_CONFIG.hospital.name.th}

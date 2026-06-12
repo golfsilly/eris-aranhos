@@ -49,7 +49,7 @@ export function HeroSection() {
           {/* CTA Buttons */}
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Button size="lg" className="text-base cursor-pointer px-6" asChild>
-              <Link href="/monitor">
+              <Link href="/display1">
                 ดูระบบคิว <Play className="ml-2 h-8 w-8" />{" "}
               </Link>
             </Button>

@@ -1,12 +1,15 @@
-import { genPageMetadata } from "@/app/seo";
-import NurseStation from "./_components/nurse-station";
+import ComingSoonPage from "@/components/coming-soon";
 
-export const metadata = genPageMetadata({ title: "Nurse Station" });
+export default function NursePage() {
+  const isComingSoon = true;
 
-export default function NurseStationPage() {
+  if (isComingSoon) {
+    return <ComingSoonPage />;
+  }
+
   return (
-    <>
-      <NurseStation />
-    </>
+    <div>
+      <h1 className="text-2xl font-bold"></h1>
+    </div>
   );
 }

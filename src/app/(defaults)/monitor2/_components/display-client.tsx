@@ -2,9 +2,8 @@
 
 import MonitorHeader from "./monitor-header";
 import MonitorFooter from "./monitor-footer";
-import { VideoPanel } from "./video-panel";
-import { CurrentPatientPanel } from "./panel2/current-patient-panel";
-import { WaitingPatientPanel } from "./panel2/waiting-patient-panel";
+import { MediaPanel } from "./media-panel";
+import { CurrentPatientPanel } from "./current-patient-panel";
 import { useCprStatus } from "../hooks/use-cpr-status";
 import { useCarouselStatus } from "../hooks/use-carousel-status";
 import { useVideoRotation } from "../hooks/use-video-rotation";
@@ -13,7 +12,7 @@ import {
   useYoutubeSetting,
   useYoutubeSettingStream,
 } from "../hooks/use-youtube-setting";
-import { useFooterMessage } from "@/hooks/use-footer-message";
+import { useFooterMessage } from "@/app/(defaults)/display1/_components/hook/use-footer-message";
 
 export function DisplayClient() {
   const { data: setting } = useYoutubeSetting();
@@ -38,11 +37,11 @@ export function DisplayClient() {
         <div
           className="grid h-full gap-3"
           style={{
-            gridTemplateColumns: "40% 59%",
+            gridTemplateColumns: "45% 54%",
           }}
         >
           <div className="h-full overflow-hidden rounded-2xl">
-            <VideoPanel
+            <MediaPanel
               isCPR={isCPR}
               isCarousel={isCarousel}
               currentVideo={currentVideo}

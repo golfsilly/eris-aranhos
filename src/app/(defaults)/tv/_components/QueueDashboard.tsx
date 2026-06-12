@@ -142,13 +142,13 @@ export default function QueueDashboard() {
           </div>
         ) : (
           <div className="w-full h-full">
-            <iframe
+            {/* <iframe
               className="w-full h-full pointer-events-none"
               src="https://www.youtube.com/embed/ScfMTVRdKrk?autoplay=1&mute=1&loop=1&playlist=ScfMTVRdKrk&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1"
               title="ER Health Education"
               allow="autoplay; encrypted-media"
               allowFullScreen
-            ></iframe>
+            ></iframe> */}
             <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4">
               <p className="text-lg font-bold text-center"></p>
             </div>

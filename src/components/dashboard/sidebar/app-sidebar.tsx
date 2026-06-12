@@ -29,7 +29,6 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                   width={42}
                   height={42}
                   className="rounded-lg w-12 h-12 object-contain"
-                  priority
                 />
 
                 <div className="flex flex-col">

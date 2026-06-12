@@ -1,11 +1,12 @@
-import { USER_ROLE } from "@/constants/roles";
-import { requireSession } from "@/lib/session";
+import { requireStaff } from "@/lib/session";
 
 interface StaffStationLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function StaffStationLayout({ children }: StaffStationLayoutProps) {
-  await requireSession([USER_ROLE.ADMIN, USER_ROLE.DOCTOR, USER_ROLE.NURSE, USER_ROLE.STAFF]);
+export default async function StaffStationLayout({
+  children,
+}: StaffStationLayoutProps) {
+  await requireStaff;
   return <>{children}</>;
 }

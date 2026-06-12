@@ -1,5 +1,5 @@
 export async function getTvPlaylist() {
-  const res = await fetch("/api/tv-playlist");
+  const res = await fetch("/api/youtube");
 
   const data = await res.json();
 

@@ -1,6 +1,6 @@
 import ComingSoonPage from "@/components/coming-soon";
 
-export default function Page() {
+export default function DoctorPage() {
   const isComingSoon = true;
 
   if (isComingSoon) {

@@ -22,7 +22,6 @@ export function PublicHeader() {
               width={48}
               height={48}
               className="object-contain p-1"
-              priority
             />
           </div>
         </Link>

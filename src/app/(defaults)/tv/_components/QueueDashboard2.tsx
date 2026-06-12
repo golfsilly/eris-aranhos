@@ -123,7 +123,7 @@ export default function QueueDashboard2() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/tv-playlist")
+    fetch("/api/youtube")
       .then((res) => res.json())
       .then(setVideos);
   }, []);
@@ -196,13 +196,13 @@ export default function QueueDashboard2() {
                     </div>
                   </div>
                 ) : (
-                  <iframe
-                    key={currentVideo?.youtubeId}
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${currentVideo?.youtubeId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${currentVideo?.youtubeId}`}
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                  />
+                  // <iframe
+                  //   key={currentVideo?.youtubeId}
+                  //   className="w-full h-full"
+                  //   src={`https://www.youtube.com/embed/${currentVideo?.youtubeId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${currentVideo?.youtubeId}`}
+                  //   allow="autoplay; encrypted-media"
+                  //   allowFullScreen
+                  // />
                 )}
               </div>
             </CardContent>
