@@ -132,10 +132,10 @@ export async function enableUser(
 export async function resetPassword(
   data: ResetPasswordInput
 ) {
-    return await auth.api.setUserPassword({
+    return await auth.api.setPassword({
     body: {
       userId: data.userId,
-      newPassword: data.password,
+      password: data.password,
     },
   });
 }

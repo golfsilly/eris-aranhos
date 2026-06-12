@@ -2,9 +2,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { username } from "better-auth/plugins/username";
-import { admin } from "better-auth/plugins";
 import { prisma } from "./prisma";
-import { UserRole } from "@prisma/client"; // 🟢 1. Import Enum มา
+import { UserRole } from "@prisma/client"; 
 
 export const auth = betterAuth({
   // ── Database ──────────────────────────────────────────────────────────────
@@ -18,11 +17,6 @@ export const auth = betterAuth({
     minPasswordLength: 3,
     maxPasswordLength: 128,
     autoSignIn: true,
-    requireEmailVerification: false,
-
-    sendResetPassword: async ({ user, url, token }) => {
-      console.log(`ส่งลิงก์รีเซ็ตรหัสผ่านไปที่ ${user.email}: ${url}`);
-    },
   },
 
   // ── Session ───────────────────────────────────────────────────────────────
@@ -96,5 +90,5 @@ export const auth = betterAuth({
   },
 
   // ── Plugins ───────────────────────────────────────────────────────────────
-  plugins: [username(), admin(), nextCookies()],
+  plugins: [username(), nextCookies()],
 });

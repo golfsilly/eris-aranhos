@@ -178,12 +178,6 @@ model User {
 
   role UserRole @default(STAFF)
 
-  banned Boolean? @default(false)
-
-  banReason String?
-
-  banExpires DateTime?
-
   isActive Boolean? @default(true)
 
   emailVerified Boolean @default(false)

@@ -16,7 +16,7 @@ interface LayoutProps {
 export default async function DashboardLayout({
   children,
 }: Readonly<LayoutProps>) {
-  await requireStaff();
+  // await requireStaff();
 
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
