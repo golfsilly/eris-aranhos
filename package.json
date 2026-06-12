@@ -1,6 +1,6 @@
 {
-  "name": "er-monitor-queue",
-  "version": "0.1.0",
+  "name": "eris-aranhos",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "socket": "tsx src/server/socket.ts",
