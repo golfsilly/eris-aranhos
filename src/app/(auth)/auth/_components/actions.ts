@@ -1,8 +1,8 @@
 "use server";
 
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { SignUpFormValues, SignUpSchema } from "./schema";
-
 
 export async function signUpUser(values: SignUpFormValues) {
   const parsed = SignUpSchema.parse(values);
@@ -17,5 +17,6 @@ export async function signUpUser(values: SignUpFormValues) {
       name: `${parsed.firstName} ${parsed.lastName}`,
       displayUsername: `${parsed.firstName} ${parsed.lastName}`,
     },
+    headers: await headers(),
   });
 }
