@@ -29,8 +29,9 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { resetPassword } from "@/app/(admin)/admin/management/users/user-actions";
 
+
 const schema = z.object({
-  password: z.string().min(6, "Password ต้องอย่างน้อย 6 ตัวอักษร"),
+  password: z.string().min(3, "Password ต้องอย่างน้อย 3 ตัวอักษร"),
 });
 
 type FormValues = z.infer<typeof schema>;

@@ -1,9 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import * as betterAuthCrypto from 'better-auth/crypto';
+
 
 import {
   createUserSchema,
@@ -129,15 +130,32 @@ export async function enableUser(
   );
 }
 
-export async function resetPassword(
-  data: ResetPasswordInput
-) {
-    return await auth.api.setPassword({
-    body: {
-      userId: data.userId,
-      password: data.password,
+export async function resetPassword(data: ResetPasswordInput) {
+  const { userId, password } = data;
+  const hashedPassword = await betterAuthCrypto.hashPassword(password);
+
+  const account = await prisma.account.findFirst({
+    where: {
+      userId,
+      providerId: 'credential',
     },
   });
+
+  if (!account) throw new Error('ไม่พบบัญชี');
+
+  await prisma.$transaction(async (tx) => {
+    await tx.account.update({
+      where: { id: account.id },
+      data: { password: hashedPassword },
+    });
+
+    // ลบ session เก่าทั้งหมด (บังคับให้ login ใหม่)
+    await tx.session.deleteMany({
+      where: { userId },
+    });
+  });
+
+  return { success: true, message: 'รีเซ็ตรหัสผ่านสำเร็จ' };
 }
 
 export async function forceLogoutUser(
