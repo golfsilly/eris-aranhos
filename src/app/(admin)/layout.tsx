@@ -14,7 +14,7 @@ interface LayoutProps {
 }
 
 export default async function AdminLayout({ children }: Readonly<LayoutProps>) {
-  // await requireAdmin();
+  await requireAdmin();
 
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
