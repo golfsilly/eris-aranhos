@@ -20,9 +20,6 @@ export const auth = betterAuth({
     autoSignIn: true,
     requireEmailVerification: false,
 
-    sendResetPassword: async ({ user, url, token }) => {
-      console.log(`ส่งลิงก์รีเซ็ตรหัสผ่านไปที่ ${user.email}: ${url}`);
-    },
   },
 
   // ── Session ───────────────────────────────────────────────────────────────
