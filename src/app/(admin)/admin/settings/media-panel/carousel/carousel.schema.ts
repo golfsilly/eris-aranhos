@@ -8,4 +8,4 @@ export const carouselSchema = z.object({
   isActive: z.boolean().default(true),
 }).strict();
 
-export type Carousel = z.infer<typeof carouselSchema>;
+export type carouselType = z.infer<typeof carouselSchema>;
