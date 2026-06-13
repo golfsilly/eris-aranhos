@@ -20,20 +20,25 @@ import { Switch } from "@/components/ui/switch";
 import { createCarouselImage } from "../actions/create-carousel-image";
 
 import { ImageUpload } from "./image-upload";
+import z from "zod";
 
-import {
-  carouselSchema,
-  CarouselSchema,
-} from "../carousel.schema";
+export const carouselSchema = z
+  .object({
+    title: z.string().optional(),
+
+    durationSec: z.number().min(1),
+
+    isActive: z.boolean().default(true),
+  })
+  .strict();
+
+export type Carousel = z.infer<typeof carouselSchema>;
 
 export function CarouselFormDialog() {
-  const [file, setFile] =
-    React.useState<File | null>(null);
+  const [file, setFile] = React.useState<File | null>(null);
 
-  // ✅ FIX: RHF + Zod fully aligned
-  const form = useForm<CarouselSchema>({
+  const form = useForm<z.input<typeof carouselSchema>>({
     resolver: zodResolver(carouselSchema),
-
     defaultValues: {
       title: "",
       durationSec: 10,
@@ -42,55 +47,43 @@ export function CarouselFormDialog() {
   });
 
   // ✅ FIX: explicit SubmitHandler type
-  const onSubmit: SubmitHandler<CarouselSchema> =
-    async (values) => {
-      try {
-        if (!file) {
-          toast.error("กรุณาเลือกรูป");
-          return;
-        }
-
-        const formData = new FormData();
-
-        formData.append("image", file);
-        formData.append(
-          "title",
-          values.title || ""
-        );
-        formData.append(
-          "durationSec",
-          String(values.durationSec)
-        );
-        formData.append(
-          "isActive",
-          String(values.isActive)
-        );
-
-        await createCarouselImage(formData);
-
-        toast.success("Created successfully");
-
-        // ✅ better than reload (optional but ok)
-        window.location.reload();
-      } catch (err) {
-        console.error(err);
-        toast.error("Upload failed");
+  const onSubmit: SubmitHandler<z.input<typeof carouselSchema>> = async (
+    values,
+  ) => {
+    try {
+      if (!file) {
+        toast.error("กรุณาเลือกรูป");
+        return;
       }
-    };
+
+      const formData = new FormData();
+
+      formData.append("image", file);
+      formData.append("title", values.title || "");
+      formData.append("durationSec", String(values.durationSec));
+      formData.append("isActive", String(values.isActive ?? true));
+
+      await createCarouselImage(formData);
+
+      toast.success("Created successfully");
+
+      // ✅ better than reload (optional but ok)
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      toast.error("Upload failed");
+    }
+  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          เพิ่มรูป Carousel
-        </Button>
+        <Button>เพิ่มรูป Carousel</Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            Upload Carousel Image
-          </DialogTitle>
+          <DialogTitle>Upload Carousel Image</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -98,44 +91,29 @@ export function CarouselFormDialog() {
           <ImageUpload onChange={setFile} />
 
           {/* TITLE */}
-          <Input
-            placeholder="Title"
-            {...form.register("title")}
-          />
+          <Input placeholder="Title" {...form.register("title")} />
 
           {/* DURATION */}
           <Input
             type="number"
             placeholder="Duration (sec)"
-            {...form.register(
-              "durationSec",
-              {
-                valueAsNumber: true,
-              }
-            )}
+            {...form.register("durationSec", {
+              valueAsNumber: true,
+            })}
           />
 
           {/* SWITCH */}
           <div className="flex items-center justify-between">
-            <span className="text-sm">
-              Active
-            </span>
+            <span className="text-sm">Active</span>
 
             <Switch
               checked={form.watch("isActive")}
-              onCheckedChange={(v) =>
-                form.setValue("isActive", v)
-              }
+              onCheckedChange={(v) => form.setValue("isActive", v)}
             />
           </div>
 
           {/* SUBMIT */}
-          <Button
-            className="w-full"
-            onClick={form.handleSubmit(
-              onSubmit
-            )}
-          >
+          <Button className="w-full" onClick={form.handleSubmit(onSubmit)}>
             Save
           </Button>
         </div>

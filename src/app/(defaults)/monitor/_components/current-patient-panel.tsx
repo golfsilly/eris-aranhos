@@ -1,39 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useCurrentPatient } from "../hooks/use-current-patient";
-import { Activity, Beaker, CheckCircle2, Bell, Play } from "lucide-react";
+import { Activity, Beaker, CheckCircle2 } from "lucide-react";
 
 export function CurrentPatientPanel() {
   const { data: patients = [], isLoading } = useCurrentPatient();
-  // const [isConnected, setIsConnected] = useState(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  // // ฟังก์ชันเรียกคิว + พูดชื่อ
-  // const announceQueue = (oqueue: string | number, fullname?: string) => {
-  //   const maskedName = fullname ? maskName(fullname) : "";
-
-  //   // 1. เล่นเสียง bell (แจ้งเตือน)
-  //   const audio = new Audio("/sounds/queue-call.mp3"); // ใส่ไฟล์เสียงของคุณ
-  //   audio.volume = 0.85;
-  //   audio.play().catch(() => {});
-
-  //   // 2. Text-to-Speech (เสียงพูดภาษาไทย)
-  //   if ("speechSynthesis" in window) {
-  //     const utterance = new SpeechSynthesisUtterance();
-
-  //     utterance.text = `เรียกคิวที่ ${oqueue} ${maskedName}`;
-  //     utterance.lang = "th-TH";
-  //     utterance.rate = 0.92; // ความเร็ว
-  //     utterance.pitch = 1.05;
-  //     utterance.volume = 0.95;
-
-  //     window.speechSynthesis.cancel();
-  //     window.speechSynthesis.speak(utterance);
-  //   }
-  // };
 
   // ฟังก์ชันสำหรับเบลอชื่อผู้ป่วย (PDPA Masking Logic)
   const maskName = (fullname: string) => {
@@ -67,34 +42,6 @@ export function CurrentPatientPanel() {
 
     return maskedFirst + maskedLast;
   };
-
-  // useEffect(() => {
-  //   // --- SSE Connection ---
-  //   const eventSource = new EventSource("/api/queue/events"); 
-
-  //   eventSource.onopen = () => setIsConnected(true);
-  //   eventSource.onerror = () => setIsConnected(false);
-
-  //   eventSource.addEventListener("call-queue", (event) => {
-  //     const data = JSON.parse(event.data);
-
-  //     if (data.oqueue) {
-  //       announceQueue(data.oqueue, data.fullname);
-
-  //       // Notification บนหน้าจอ
-  //       const notif = document.createElement("div");
-  //       notif.className = `fixed top-8 right-8 bg-gradient-to-r from-red-600 to-rose-600 text-white px-8 py-5 rounded-3xl shadow-2xl text-2xl font-bold z-50 flex items-center gap-4 animate-bounce`;
-  //       notif.innerHTML = `🔔 เรียกคิวที่ <span class="text-yellow-300">${data.oqueue}</span>`;
-  //       document.body.appendChild(notif);
-
-  //       setTimeout(() => notif.remove(), 6000);
-  //     }
-  //   });
-
-  //   return () => {
-  //     eventSource.close();
-  //   };
-  // }, []);
 
   // Auto Scroll Engine
   useEffect(() => {

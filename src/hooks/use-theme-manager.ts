@@ -57,8 +57,8 @@ export function useThemeManager() {
     // Also remove any inline styles that might have been set (comprehensive cleanup)
     const inlineStyles = root.style
     for (let i = inlineStyles.length - 1; i >= 0; i--) {
-      const property = inlineStyles[i]
-      if (property.startsWith('--')) {
+      const property = inlineStyles[i] ?? ''
+      if (property && property.startsWith('--')) {
         root.style.removeProperty(property)
       }
     }

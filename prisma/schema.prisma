@@ -15,24 +15,6 @@ datasource db {
 // Enums
 // ============================================================================
 
-enum QueueStatus {
-  waiting
-  calling
-  examining
-  observation
-  done
-  cancelled
-}
-
-enum QueueAction {
-  CALL
-  RECALL
-  CANCEL_CALL
-  MOVE_TO_EXAM
-  RETURN_TO_WAITING
-  COMPLETE
-}
-
 enum DisplayMode {
   YOUTUBE
   CAROUSEL
@@ -44,140 +26,6 @@ enum UserRole {
   STAFF
   NURSE
   DOCTOR
-}
-
-enum SystemSettingDataType {
-  STRING
-  NUMBER
-  BOOLEAN
-  JSON
-  ARRAY
-}
-
-// ============================================================================
-// HOSxP Sync
-// ตารางพักข้อมูลผู้ป่วยที่ Sync มาจาก HOSxP
-// ============================================================================
-
-model HosxpErVisit {
-  vn     String @id @db.VarChar(20)
-  hn     String @db.VarChar(20)
-  oqueue Int
-
-  vstDate DateTime?
-  vstTime String?
-
-  fname String @db.VarChar(100)
-  ageY  Int?
-
-  bps         Float?
-  bpd         Float?
-  pulse       Float?
-  rr          Float?
-  temperature Float?
-  o2sat       Float?
-
-  erEmergencyLevelId Int?
-  ptPriorityId       Int?
-
-  curDep  String?
-  lastDep String?
-
-  ovstost  String?
-  tostName String?
-
-  raw Json?
-
-  createdAt DateTime @default(now())
-  syncedAt  DateTime @updatedAt
-
-  queueState ErQueueState?
-
-  @@index([hn])
-  @@index([oqueue])
-  @@index([vstDate])
-  @@map("hosxp_er_visit")
-}
-
-// ============================================================================
-// Queue Management
-// ระบบจัดการคิว ER
-// ============================================================================
-
-model ErQueueState {
-  vn     String      @id @db.VarChar(20)
-  status QueueStatus @default(waiting)
-
-  currentChannelId String?      @db.VarChar(50)
-  channel          ExamChannel? @relation(fields: [currentChannelId], references: [id])
-
-  calledAt    DateTime?
-  examiningAt DateTime?
-  doneAt      DateTime?
-
-  calledByUserId  String?
-  updatedByUserId String?
-
-  calledBy  User? @relation("QueueCalledBy", fields: [calledByUserId], references: [id])
-  updatedBy User? @relation("QueueUpdatedBy", fields: [updatedByUserId], references: [id])
-
-  note String? @db.Text
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  visit  HosxpErVisit @relation(fields: [vn], references: [vn], onDelete: Cascade)
-  events QueueEvent[]
-
-  @@index([status])
-  @@index([calledByUserId])
-  @@index([updatedByUserId])
-  @@map("er_queue_state")
-}
-
-model QueueEvent {
-  id BigInt @id @default(autoincrement())
-
-  vn     String      @db.VarChar(20)
-  action QueueAction
-
-  fromStatus QueueStatus?
-  toStatus   QueueStatus?
-
-  fromChannelId String?
-  toChannelId   String?
-
-  note String? @db.Text
-
-  createdByUserId String?
-
-  createdBy User? @relation("QueueEventCreatedBy", fields: [createdByUserId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  queue ErQueueState @relation(fields: [vn], references: [vn], onDelete: Cascade)
-
-  @@index([vn])
-  @@index([action])
-  @@index([createdAt])
-  @@index([createdByUserId])
-  @@map("queue_event")
-}
-
-model ExamChannel {
-  id String @id @default(cuid())
-
-  code String @unique @db.VarChar(50)
-  name String @db.VarChar(100)
-
-  sortOrder Int     @default(0)
-  isActive  Boolean @default(true)
-
-  createdAt DateTime @default(now())
-
-  queues ErQueueState[]
-
-  @@map("exam_channel")
 }
 
 // ============================================================================
@@ -303,17 +151,16 @@ model User {
 
   role UserRole @default(STAFF)
 
-  banned          Boolean?  @default(false)
+  banned      Boolean?  @default(false)
+  banReason   String?
+  banExpires  DateTime?
+
   isActive        Boolean?  @default(true)
   emailVerified Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  calledQueues  ErQueueState[] @relation("QueueCalledBy")
-  updatedQueues ErQueueState[] @relation("QueueUpdatedBy")
-
-  queueEvents QueueEvent[] @relation("QueueEventCreatedBy")
 
   sessions  Session[]
   accounts  Account[]
